@@ -1,0 +1,2 @@
+user name: marcelinogneto_db_user
+password: 2KsZHNqhEsdeifLj
