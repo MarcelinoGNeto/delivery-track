@@ -1,2 +1,5 @@
-user name: marcelinogneto_db_user
-password: 2KsZHNqhEsdeifLj
+todo
+[] pagina inicial
+[] dashboard
+[] navegação (menu lateral layout)
+[] login
