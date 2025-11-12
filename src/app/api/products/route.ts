@@ -2,31 +2,25 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 
-// ✅ LISTAR PRODUTOS
+// GET - Listar produtos
 export async function GET() {
   try {
     await connectDB();
     const products = await Product.find().sort({ createdAt: -1 });
     return NextResponse.json(products);
   } catch (error) {
-    console.error("Erro ao listar produtos:", error);
-    return NextResponse.json(
-      { error: "Erro ao listar produtos." },
-      { status: 500 }
-    );
+    console.error("Erro ao buscar produtos:", error);
+    return NextResponse.json({ error: "Erro ao buscar produtos." }, { status: 500 });
   }
 }
 
-// ✅ CADASTRAR PRODUTO
+// POST - Criar produto
 export async function POST(req: Request) {
   try {
     const { image, name, description, price } = await req.json();
 
     if (!name || !description || !price) {
-      return NextResponse.json(
-        { error: "Preencha todos os campos obrigatórios." },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Preencha todos os campos obrigatórios." }, { status: 400 });
     }
 
     await connectDB();
@@ -40,9 +34,6 @@ export async function POST(req: Request) {
     return NextResponse.json(product, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar produto:", error);
-    return NextResponse.json(
-      { error: "Erro interno do servidor." },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Erro interno do servidor." }, { status: 500 });
   }
 }
