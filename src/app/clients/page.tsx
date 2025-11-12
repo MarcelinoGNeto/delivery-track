@@ -42,11 +42,8 @@ export default function ClientsPage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto p-6 space-y-4">
-      <h1 className="text-2xl font-bold">Gerenciar Clientes</h1>
-
+    <div className="p-6 space-y-6">
       <ClientForm onCreated={handleClientsUpdated} />
-
       <div className="border-t pt-4">
         {loading ? (
           <p className="text-sm text-muted-foreground">Carregando clientes...</p>

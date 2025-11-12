@@ -59,7 +59,7 @@ export default function ProductForm({ onSubmit, defaultValues }: ProductFormProp
   };
 
   return (
-    <form onSubmit={handleSubmit(submitForm)} className="space-y-3 max-w-md mx-auto">
+    <form onSubmit={handleSubmit(submitForm)} className="space-y-3 ">
       <Input {...register("image")} placeholder="URL da imagem (opcional)" />
       {errors.image && <p className="text-red-500 text-sm">{errors.image.message}</p>}
 

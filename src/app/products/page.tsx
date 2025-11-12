@@ -39,7 +39,6 @@ export default function ProductsPage() {
     void load();
   }, []);
 
-  // cria ou atualiza
   const handleSubmit = async (formData: ProductFormData) => {
     try {
       const isEdit = !!editingProduct;
@@ -97,9 +96,7 @@ export default function ProductsPage() {
   };
 
   return (
-    <div className="p-6 space-y-8">
-      <h1 className="text-2xl font-bold text-center">Gerenciar Produtos</h1>
-
+    <div className="p-6 space-y-6">
       <ProductForm
         onSubmit={handleSubmit}
         defaultValues={

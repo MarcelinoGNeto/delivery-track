@@ -66,8 +66,7 @@ export default function OrdersPage() {
   if (loading) return <p>Carregando...</p>;
 
   return (
-    <div className="max-w-3xl mx-auto space-y-6 p-4">
-      <h1 className="text-2xl font-semibold">Pedidos</h1>
+    <div className="p-6 space-y-6">
       <OrderForm
         clients={clients}
         products={products}

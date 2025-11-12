@@ -4,3 +4,6 @@ todo
 [] dashboard
 [] navegação (menu lateral layout)
 [] login
+
+bugs
+[] toast
