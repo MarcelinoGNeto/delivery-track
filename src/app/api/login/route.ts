@@ -42,13 +42,21 @@ export async function POST(req: Request) {
       { expiresIn: "1h" }
     );
 
-    return NextResponse.json({
-      token,
+    const response = NextResponse.json({
       user: {
         name: user.name,
         email: user.email,
       },
     });
+
+    response.cookies.set("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      path: "/",
+      maxAge: 60 * 60, // 1 hora
+    });
+
+    return response;
   } catch (error) {
     console.error("Erro ao autenticar:", error);
     return NextResponse.json(

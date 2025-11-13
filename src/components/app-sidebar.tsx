@@ -27,22 +27,22 @@ export const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/",
+      url: "/logged",
       icon: IconDashboard,
     },
     {
       title: "Clientes",
-      url: "/clients",
+      url: "/logged/clients",
       icon: IconUsers,
     },
     {
       title: "Produtos",
-      url: "/products",
+      url: "/logged/products",
       icon: IconReport,
     },
     {
       title: "Pedidos",
-      url: "/orders",
+      url: "/logged/orders",
       icon: IconListDetails,
     },
   ],

@@ -14,7 +14,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Client } from "@/app/clients/page";
+import { Client } from "@/app/logged/clients/page";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
