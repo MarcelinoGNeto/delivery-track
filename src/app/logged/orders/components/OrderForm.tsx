@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { Product } from "@/types/product";
 import { Client } from "@/types/client";
+import { useAuth } from "@/context/AuthContext";
 
 const orderSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente."),
@@ -56,14 +57,12 @@ export default function OrderForm({
     name: "items",
   });
 
-  // Função para formatar em reais
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(value);
 
-  // Atualiza o campo price automaticamente
   const items = watch("items");
   items.forEach((item, index) => {
     const product = products.find((p) => p._id === item.productId);
@@ -75,15 +74,17 @@ export default function OrderForm({
     }
   });
 
-  // Calcula o total geral do pedido
   const totalPrice = items.reduce((acc, item) => acc + (item.price || 0), 0);
-
+  
+  const { user } = useAuth();
+  
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
     try {
+      const payload = { ...data, totalPrice, userId: user?._id };
       const res = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, totalPrice }), // envia o total
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Falha ao criar pedido.");

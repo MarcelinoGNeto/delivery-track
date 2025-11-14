@@ -78,12 +78,6 @@ export default function OrdersPage() {
         products={products}
         onUpdated={handleOrderCreated}
       />
-      {/* <OrdersTable
-        ordersApi={ordersApi}
-        clients={clients}
-        products={products}
-        onUpdated={handleOrderCreated}
-      /> */}
     </div>
   );
 }

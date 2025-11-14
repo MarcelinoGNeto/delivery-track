@@ -26,6 +26,7 @@ export enum PaymentMethod {
 }
 
 export interface OrderDocument extends Document {
+  userId?: mongoose.Types.ObjectId;
   clientId: string;
   items: OrderItem[];
   totalPrice: number;
@@ -37,6 +38,7 @@ export interface OrderDocument extends Document {
 
 const OrderSchema = new Schema<OrderDocument>(
   {
+    userId: { type: mongoose.Types.ObjectId, ref: "User" },
     clientId: { type: String, required: true },
     items: [
       {
