@@ -27,7 +27,7 @@ export const data = {
   navMain: [
     {
       title: "Dashboard",
-      url: "/logged",
+      url: "/logged/dashboard",
       icon: IconDashboard,
     },
     {
