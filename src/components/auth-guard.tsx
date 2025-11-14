@@ -7,13 +7,13 @@ export function AuthGuard({ children }: { children: React.ReactNode }) {
   const { user } = useAuth();
   const router = useRouter();
 
-  useEffect(() => {
-    if (!user) {
-      router.replace("/login");
-    }
-  }, [router, user]);
+  // useEffect(() => {
+  //   if (!user) {
+  //     router.replace("/login");
+  //   }
+  // }, [router, user]);
 
-  if (!user) return null;
+  // if (!user) return null;
 
   return <>{children}</>;
 }

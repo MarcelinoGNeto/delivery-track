@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useAuth } from "@/context/AuthContext";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
@@ -30,12 +31,15 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
     resolver: zodResolver(clientSchema),
   });
 
+  const { user } = useAuth();
+  
   const onSubmit = async (data: ClientFormData) => {
     try {
+      const payload = { ...data, userId: user?._id };
       const res = await fetch("/api/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Erro ao criar cliente");

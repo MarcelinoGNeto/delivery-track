@@ -4,7 +4,7 @@ import Client from "@/models/Client";
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, address } = await req.json();
+    const { name, email, phone, address, userId } = await req.json();
 
     if (!name || !email || !phone) {
       return NextResponse.json(
@@ -14,7 +14,7 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
-    const client = await Client.create({ name, email, phone, address });
+    const client = await Client.create({ name, email, phone, address, userId });
     return NextResponse.json(client, { status: 201 });
   } catch (error) {
     console.error("Erro ao criar cliente:", error);

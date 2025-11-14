@@ -2,15 +2,12 @@ import { NextResponse } from "next/server";
 import { connectDB } from "@/lib/db";
 import Product from "@/models/Product";
 
-// =====================
-// DELETE /api/products/[id]
-// =====================
 export async function DELETE(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params; // ✅ necessário em Next.js 15+
+    const { id } = await context.params; 
     await connectDB();
 
     const deletedProduct = await Product.findByIdAndDelete(id);
@@ -35,15 +32,12 @@ export async function DELETE(
   }
 }
 
-// =====================
-// PUT /api/products/[id]
-// =====================
 export async function PUT(
   req: Request,
   context: { params: Promise<{ id: string }> }
 ) {
   try {
-    const { id } = await context.params; // ✅
+    const { id } = await context.params;
     const { image, name, description, price } = await req.json();
 
     if (!name || !description || !price) {

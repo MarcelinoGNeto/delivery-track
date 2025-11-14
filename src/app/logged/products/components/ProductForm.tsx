@@ -8,6 +8,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useEffect } from "react";
+import { useAuth } from "@/context/AuthContext";
 
 const productSchema = z.object({
   image: z.string().optional(),
@@ -48,9 +49,12 @@ export default function ProductForm({ onSubmit, defaultValues }: ProductFormProp
     if (defaultValues) reset(defaultValues);
   }, [defaultValues, reset]);
 
+  const { user } = useAuth();
+
   const submitForm = async (data: ProductFormData) => {
     try {
-      await onSubmit(data);
+      const payload = { ...data, userId: user?._id };
+      await onSubmit(payload);
       toast.success("Produto salvo com sucesso!");
       reset();
     } catch {

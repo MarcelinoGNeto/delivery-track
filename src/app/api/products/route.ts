@@ -17,19 +17,21 @@ export async function GET() {
 // POST - Criar produto
 export async function POST(req: Request) {
   try {
-    const { image, name, description, price } = await req.json();
+    const { image, name, description, price, userId } = await req.json();
 
     if (!name || !description || !price) {
       return NextResponse.json({ error: "Preencha todos os campos obrigatórios." }, { status: 400 });
     }
-
+    console.log("Creating product:", { image, name, description, price, userId });
     await connectDB();
     const product = await Product.create({
       image: image || null,
       name,
       description,
       price: parseFloat(price),
+      userId
     });
+    console.log("Product created:", product);
 
     return NextResponse.json(product, { status: 201 });
   } catch (error) {

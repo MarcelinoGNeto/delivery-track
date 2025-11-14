@@ -4,7 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 type AuthUser = {
   name: string;
   email: string;
-  avatar: string;
+  _id: string;
 };
 
 type AuthContextType = {

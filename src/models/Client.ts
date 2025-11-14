@@ -1,6 +1,7 @@
 import mongoose, { Schema, Document, models } from "mongoose";
 
 export interface IClient extends Document {
+  userId?: mongoose.Types.ObjectId;
   name: string;
   email: string;
   phone: string;
@@ -9,6 +10,7 @@ export interface IClient extends Document {
 
 const ClientSchema = new Schema<IClient>(
   {
+    userId: { type: mongoose.Types.ObjectId, ref: "User" },
     name: { type: String, required: true },
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true },

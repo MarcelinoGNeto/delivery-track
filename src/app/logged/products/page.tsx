@@ -2,19 +2,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
-import Image from "next/image";
 import ProductForm, { ProductFormData } from "./components/ProductForm";
-import ProductEditDialog from "./components/ProductEditDialog";
-
-type Product = {
-  _id: string;
-  image?: string;
-  name: string;
-  description: string;
-  price: number;
-};
+import { Product } from "@/types/product";
+import ProductList from "./components/ProductList";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -42,7 +33,9 @@ export default function ProductsPage() {
   const handleSubmit = async (formData: ProductFormData) => {
     try {
       const isEdit = !!editingProduct;
-      const url = isEdit ? `/api/products/${editingProduct!._id}` : "/api/products";
+      const url = isEdit
+        ? `/api/products/${editingProduct!._id}`
+        : "/api/products";
       const method = isEdit ? "PUT" : "POST";
 
       const res = await fetch(url, {
@@ -61,7 +54,6 @@ export default function ProductsPage() {
 
       toast.success(isEdit ? "Produto atualizado" : "Produto criado");
 
-      // Atualiza estado local sem recarregar toda a lista (ótimo UX)
       if (isEdit) {
         setProducts((prev) =>
           prev.map((p) => (p._id === editingProduct!._id ? result : p))
@@ -77,22 +69,36 @@ export default function ProductsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Deseja realmente excluir este produto?")) return;
-    try {
-      const res = await fetch(`/api/products/${id}`, { method: "DELETE" });
-      const result = await res.json().catch(() => null);
+    toast("Deseja realmente excluir este produto?", {
+      action: {
+        label: "Confirmar",
+        onClick: async () => {
+          try {
+            const res = await fetch(`/api/products/${id}`, {
+              method: "DELETE",
+            });
+            const result = await res.json().catch(() => null);
 
-      if (!res.ok) {
-        toast.error(result?.error || "Erro ao excluir produto");
-        return;
-      }
+            if (!res.ok) {
+              toast.error(result?.error || "Erro ao excluir produto");
+              return;
+            }
 
-      toast.success("Produto excluído");
-      setProducts((prev) => prev.filter((p) => p._id !== id));
-    } catch (err) {
-      console.error(err);
-      toast.error("Erro ao excluir produto");
-    }
+            toast.success("Produto excluído");
+            setProducts((prev) => prev.filter((p) => p._id !== id));
+          } catch (err) {
+            console.error(err);
+            toast.error("Erro ao excluir produto");
+          }
+        },
+      },
+      cancel: {
+        label: "Cancelar",
+        onClick: () => {
+          toast.info("Exclusão cancelada");
+        },
+      },
+    });
   };
 
   return (
@@ -104,32 +110,17 @@ export default function ProductsPage() {
             ? {
                 image: editingProduct.image || "",
                 name: editingProduct.name,
-                description: editingProduct.description,
-                price: editingProduct.price.toString(),
+                description: editingProduct.description ?? "",
+                price: editingProduct.price?.toString() ?? "",
               }
             : undefined
         }
       />
-
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 mt-8">
-        {products.map((p) => (
-          <div key={p._id} className="border rounded-lg p-4 shadow">
-            {p.image && (
-              <Image src={p.image} alt={p.name} className="h-40 w-full object-cover mb-2" />
-            )}
-            <h2 className="font-semibold">{p.name}</h2>
-            <p className="text-sm text-gray-600 mb-2">{p.description}</p>
-            <p className="font-medium">R$ {Number(p.price).toFixed(2)}</p>
-
-            <div className="flex justify-between mt-3">
-              <ProductEditDialog product={p} onUpdated={fetchProducts} />
-              <Button size="sm" variant="destructive" onClick={() => handleDelete(p._id)}>
-                Excluir
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
+      <ProductList
+        products={products}
+        fetchProducts={fetchProducts}
+        handleDelete={handleDelete}
+      />
     </div>
   );
 }
