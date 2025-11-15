@@ -1,4 +1,3 @@
 todo
-[] método de pagamento - pedido
+[] Notificar expiração do token e redirecionar para tela de login
 [] pagina inicial
-[] adicionar user na criação de clientes/produtos/pedidos
