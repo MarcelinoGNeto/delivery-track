@@ -8,6 +8,7 @@ export interface Order {
   totalPrice: number;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  paymentMethod: string;
 }
 
 interface OrderItem {

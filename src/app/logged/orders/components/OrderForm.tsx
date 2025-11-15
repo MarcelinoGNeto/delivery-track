@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Product } from "@/types/product";
 import { Client } from "@/types/client";
 import { useAuth } from "@/context/AuthContext";
+import { PaymentMethod } from "@/models/Order";
 
 const orderSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente."),
@@ -21,7 +22,14 @@ const orderSchema = z.object({
       })
     )
     .min(1, "Adicione pelo menos um produto."),
+  paymentMethod: z
+    .nativeEnum(PaymentMethod)
+    .refine((val) => Object.values(PaymentMethod).includes(val), {
+      message: "Selecione um método de pagamento.",
+    }),
 });
+
+
 
 export type OrderFormData = z.infer<typeof orderSchema>;
 
@@ -75,9 +83,9 @@ export default function OrderForm({
   });
 
   const totalPrice = items.reduce((acc, item) => acc + (item.price || 0), 0);
-  
+
   const { user } = useAuth();
-  
+
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
     try {
       const payload = { ...data, totalPrice, userId: user?._id };
@@ -142,7 +150,6 @@ export default function OrderForm({
               className="w-24"
             />
 
-            {/* Campo de preço calculado */}
             <Input
               readOnly
               value={formatCurrency(items[index]?.price || 0)}
@@ -172,6 +179,23 @@ export default function OrderForm({
         >
           + Adicionar item
         </Button>
+      </div>
+      {/* Método de pagamento */}
+      <div>
+        <label>Método de pagamento</label>
+        <select
+          {...register("paymentMethod")}
+          className="w-full border rounded p-2"
+        >
+          <option value="">Selecione o método</option>
+          <option value="cartão de crédito">Cartão de Crédito</option>
+          <option value="cartão de débito">Cartão de Débito</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="pix">Pix</option>
+        </select>
+        {errors.paymentMethod && (
+          <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>
+        )}
       </div>
 
       {/* Total do pedido */}

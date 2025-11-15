@@ -21,6 +21,7 @@ interface OrderApi {
   createdAt: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
+  paymentMethod: string;
 }
 
 export default function OrdersPage() {

@@ -77,6 +77,10 @@ export default function OrderList({
                 </li>
               ))}
             </ul>
+            <div className="flex items-center gap-2 text-sm">
+              <p className="text-muted-foreground">Método de pagamento:</p>
+              <p className="font-medium">{order.paymentMethod}</p>
+            </div>
 
             <div className="flex justify-between items-center">
               <div className="flex gap-2">
@@ -84,13 +88,13 @@ export default function OrderList({
                   variant={order.status === "entregue" ? "secondary" : "destructive"}
                   className={order.status === "entregue" ? "bg-green-500 text-white" : ""}
                 >
-                  {order.status}
+                  Pedido: {order.status}
                 </Badge>
                 <Badge
                   variant={order.paymentStatus === "pago" ? "secondary" : "outline"}
                   className={order.paymentStatus === "pago" ? "bg-green-500 text-white" : ""}
                 >
-                  {order.paymentStatus}
+                  Pagamento: {order.paymentStatus}
                 </Badge>
               </div>
               <p className="font-semibold">Total: R$ {order.totalPrice.toFixed(2)}</p>

@@ -38,7 +38,7 @@ export interface OrderDocument extends Document {
 
 const OrderSchema = new Schema<OrderDocument>(
   {
-    userId: { type: mongoose.Types.ObjectId, ref: "User" },
+    userId: { type: Schema.Types.ObjectId, ref: "User" },
     clientId: { type: String, required: true },
     items: [
       {

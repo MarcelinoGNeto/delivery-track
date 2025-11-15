@@ -29,6 +29,7 @@ const orderSchema = z.object({
     .min(1, "Adicione pelo menos um produto."),
   status: z.string().min(1, "Selecione o status."),
   paymentStatus: z.string().min(1, "Selecione o status de pagamento."),
+  paymentMethod: z.string().min(1, "Selecione o método de pagamento."),
 });
 
 export type EditOrderFormData = z.infer<typeof orderSchema>;
@@ -40,6 +41,7 @@ interface EditOrderModalProps {
     items: { productId: string; quantity: number; price: number }[];
     status: string;
     paymentStatus: string;
+    paymentMethod: string;
   };
   clients: Client[];
   products: Product[];
@@ -68,6 +70,7 @@ export default function EditOrderModal({
       items: order.items,
       status: order.status,
       paymentStatus: order.paymentStatus,
+      paymentMethod: order.paymentMethod,
     },
   });
 
@@ -198,6 +201,23 @@ export default function EditOrderModal({
               + Adicionar item
             </Button>
           </div>
+
+          <div>
+        <label>Método de pagamento</label>
+        <select
+          {...register("paymentMethod")}
+          className="w-full border rounded p-2"
+        >
+          <option value="">Selecione o método</option>
+          <option value="cartão de crédito">Cartão de Crédito</option>
+          <option value="cartão de débito">Cartão de Débito</option>
+          <option value="dinheiro">Dinheiro</option>
+          <option value="pix">Pix</option>
+        </select>
+        {errors.paymentMethod && (
+          <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>
+        )}
+      </div>
 
           {/* Status */}
           <div>
