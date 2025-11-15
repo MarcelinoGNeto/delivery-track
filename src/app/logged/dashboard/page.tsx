@@ -169,11 +169,11 @@ export default function DashboardPage() {
                     <div className="text-right">
                       <p className="text-sm font-semibold">R$ {order.totalPrice.toFixed(2)}</p>
                       <div className="flex gap-1 justify-end">
-                        <Badge variant="outline">{order.status}</Badge>
+                        <Badge variant="outline">Pedido: {order.status}</Badge>
                         <Badge
                           variant={order.paymentStatus === "pago" ? "secondary" : "outline"}
                         >
-                          {order.paymentStatus}
+                          Pagamento: {order.paymentStatus}
                         </Badge>
                       </div>
                     </div>
