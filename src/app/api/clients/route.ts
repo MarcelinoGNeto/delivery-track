@@ -20,8 +20,19 @@ export async function POST(req: Request) {
     await connectDB();
     const client = await Client.create({ name, email, phone, address, userId });
     return NextResponse.json(client, { status: 201 });
-  } catch (error) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  } catch (error: any) {
     console.error("Erro ao criar cliente:", error);
+
+    if (error.code === 11000 && error.keyPattern?.email) {
+      return NextResponse.json(
+        {
+          error: `O e-mail '${error.keyValue.email}' já está cadastrado. Por favor, utilize outro.`,
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { error: "Erro interno do servidor." },
       { status: 500 }

@@ -32,7 +32,7 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
   });
 
   const { user } = useAuth();
-  
+
   const onSubmit = async (data: ClientFormData) => {
     try {
       const payload = { ...data, userId: user?._id };
@@ -42,7 +42,16 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
         body: JSON.stringify(payload),
       });
 
-      if (!res.ok) throw new Error("Erro ao criar cliente");
+      const result = await res.json();
+
+      if (!res.ok) {
+        if (result?.error) {
+          toast.error(result.error);
+        } else {
+          toast.error("Erro ao cadastrar cliente.");
+        }
+        return;
+      }
 
       toast.success("Cliente cadastrado com sucesso!");
       reset();
@@ -54,15 +63,24 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 border p-4 rounded-md">
+    <form
+      onSubmit={handleSubmit(onSubmit)}
+      className="space-y-2 border p-4 rounded-md"
+    >
       <Input placeholder="Nome" {...register("name")} />
-      {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+      {errors.name && (
+        <p className="text-red-500 text-sm">{errors.name.message}</p>
+      )}
 
       <Input placeholder="E-mail" {...register("email")} />
-      {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+      {errors.email && (
+        <p className="text-red-500 text-sm">{errors.email.message}</p>
+      )}
 
       <Input placeholder="Telefone" {...register("phone")} />
-      {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+      {errors.phone && (
+        <p className="text-red-500 text-sm">{errors.phone.message}</p>
+      )}
 
       <Input placeholder="Endereço (opcional)" {...register("address")} />
 
