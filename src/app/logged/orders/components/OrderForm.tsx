@@ -17,6 +17,7 @@ import { useAuth } from "@/context/AuthContext";
 import { Trash } from "lucide-react";
 import ClientSelectCombobox from "./ClientSelect";
 import ProductSelectCombobox from "./ProductSelect";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const orderSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente."),
@@ -100,7 +101,7 @@ export default function OrderForm({
   const onSubmit: SubmitHandler<OrderFormData> = async (data) => {
     try {
       const payload = { ...data, totalPrice, userId: user?._id };
-      const res = await fetch("/api/orders", {
+      const res = await fetchWithAuth("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const schema = z.object({
   name: z.string().min(1, "Nome obrigatório"),
@@ -52,7 +53,7 @@ export default function CreateUserPage() {
 
   const fetchUsers = async () => {
     try {
-      const res = await fetch("/api/users");
+      const res = await fetchWithAuth("/api/users");
       const data = await res.json();
       setUsers(data);
     } catch {
@@ -68,7 +69,7 @@ export default function CreateUserPage() {
     try {
       const token = localStorage.getItem("token");
 
-      const res = await fetch("/api/users", {
+      const res = await fetchWithAuth("/api/users", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -95,7 +96,7 @@ export default function CreateUserPage() {
     if (!confirm("Deseja realmente excluir este usuário?")) return;
 
     try {
-      const res = await fetch(`/api/users/${id}`, { method: "DELETE" });
+      const res = await fetchWithAuth(`/api/users/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erro ao excluir usuário");
 
       toast.success("Usuário excluído");

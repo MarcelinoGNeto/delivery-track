@@ -7,6 +7,7 @@ import OrderList from "./components/OrderList";
 import { OrderStatus, PaymentStatus } from "@/models/Order";
 import { Client } from "@/types/client";
 import OrderPagination from "./components/OrderPagination";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 interface Product {
   _id: string;
@@ -37,9 +38,9 @@ export default function OrdersPage() {
   const fetchAll = async () => {
     try {
       const [clientsRes, productsRes, ordersRes] = await Promise.all([
-        fetch("/api/clients"),
-        fetch("/api/products"),
-        fetch("/api/orders"),
+        fetchWithAuth("/api/clients"),
+        fetchWithAuth("/api/products"),
+        fetchWithAuth("/api/orders"),
       ]);
 
       if (!clientsRes.ok || !productsRes.ok || !ordersRes.ok)
@@ -63,7 +64,7 @@ export default function OrdersPage() {
   const fetchOrders = async (date: Date, page: number) => {
     try {
       const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
-      const res = await fetch(
+      const res = await fetchWithAuth(
         `/api/orders?date=${dateStr}&page=${page}&limit=10`
       );
       if (!res.ok) throw new Error("Erro ao carregar pedidos");

@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import ProductForm, { ProductFormData } from "./components/ProductForm";
 import { Product } from "@/types/product";
 import ProductList from "./components/ProductList";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export default function ProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -13,7 +14,7 @@ export default function ProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("/api/products");
+      const res = await fetchWithAuth("/api/products");
       if (!res.ok) throw new Error("Erro ao buscar produtos");
       const data = await res.json();
       setProducts(data);
@@ -74,7 +75,7 @@ export default function ProductsPage() {
         label: "Confirmar",
         onClick: async () => {
           try {
-            const res = await fetch(`/api/products/${id}`, {
+            const res = await fetchWithAuth(`/api/products/${id}`, {
               method: "DELETE",
             });
             const result = await res.json().catch(() => null);

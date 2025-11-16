@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { Product } from "@/types/product";
 import { Client } from "@/types/client";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const orderSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente."),
@@ -100,7 +101,7 @@ export default function EditOrderModal({
 
   const onSubmit: SubmitHandler<EditOrderFormData> = async (data) => {
     try {
-      const res = await fetch(`/api/orders/${order._id}`, {
+      const res = await fetchWithAuth(`/api/orders/${order._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ ...data, totalPrice }),

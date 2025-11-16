@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Product } from "@/types/product";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const productSchema = z.object({
   image: z.string().optional(),
@@ -59,7 +60,7 @@ const {
 
   const onSubmit = async (data: ProductFormData) => {
     try {
-      const res = await fetch(`/api/products/${product._id}`, {
+      const res = await fetchWithAuth(`/api/products/${product._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
