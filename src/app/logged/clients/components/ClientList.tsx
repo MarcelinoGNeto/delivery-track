@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { Client } from "../page";
 import ClientEditDialog from "./ClientEditDialog";
 import { formatPhone } from '@/lib/utils';
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 interface ClientListProps {
   clients: Client[];
@@ -16,7 +17,7 @@ export default function ClientList({ clients, onUpdated }: ClientListProps) {
     if (!confirm("Deseja realmente excluir este cliente?")) return;
 
     try {
-      const res = await fetch(`/api/clients/${id}`, { method: "DELETE" });
+      const res = await fetchWithAuth(`/api/clients/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Erro ao excluir cliente");
 
       toast.success("Cliente excluído com sucesso!");

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import ClientForm from "./components/ClientForm";
 import ClientList from "./components/ClientList";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 export interface Client {
   _id: string;
@@ -20,7 +21,7 @@ export default function ClientsPage() {
   const fetchClients = async () => {
     try {
       setLoading(true);
-      const res = await fetch("/api/clients");
+      const res = await fetchWithAuth("/api/clients");
       if (!res.ok) throw new Error("Erro ao buscar clientes");
       const data: Client[] = await res.json();
       setClients(data);

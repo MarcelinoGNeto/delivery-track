@@ -16,6 +16,7 @@ import {
 import { toast } from "sonner";
 import { Client } from "@/app/logged/clients/page";
 import { formatPhone, unmaskPhone } from "@/lib/utils";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
@@ -75,7 +76,7 @@ export default function ClientEditDialog({
         ...data,
         phone: unmaskPhone(data.phone),
       };
-      const res = await fetch(`/api/clients/${client._id}`, {
+      const res = await fetchWithAuth(`/api/clients/${client._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

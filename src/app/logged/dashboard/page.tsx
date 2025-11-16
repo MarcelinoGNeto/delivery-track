@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { OrderStatus, PaymentStatus } from "@/models/Order";
 import { Client } from "@/types/client";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 interface Product {
   _id: string;
@@ -33,9 +34,9 @@ export default function DashboardPage() {
   const fetchAll = async () => {
     try {
       const [clientsRes, productsRes, ordersRes] = await Promise.all([
-        fetch("/api/clients"),
-        fetch("/api/products"),
-        fetch("/api/orders"),
+        fetchWithAuth("/api/clients"),
+        fetchWithAuth("/api/products"),
+        fetchWithAuth("/api/orders"),
       ]);
 
       if (!clientsRes.ok || !productsRes.ok || !ordersRes.ok)

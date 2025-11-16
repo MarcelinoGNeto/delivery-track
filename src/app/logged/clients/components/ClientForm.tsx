@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
 import { formatPhone, unmaskPhone } from "@/lib/utils";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
@@ -52,7 +53,7 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
         userId: user?._id,
       };
 
-      const res = await fetch("/api/clients", {
+      const res = await fetchWithAuth("/api/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),

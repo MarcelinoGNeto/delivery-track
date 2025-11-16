@@ -1,4 +1,5 @@
 "use client";
+import { fetchWithAuth } from "@/lib/fetchWithAuth";
 import { createContext, useContext, useState, useEffect } from "react";
 
 type AuthUser = {
@@ -26,7 +27,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const logout = async () => {
     try {
-      await fetch("/api/logout", { method: "POST" });
+      await fetchWithAuth("/api/logout", { method: "POST" });
     } catch (err) {
       console.error("Erro ao limpar cookie:", err);
     }
