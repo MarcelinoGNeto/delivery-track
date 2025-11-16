@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { Client } from "../page";
 import ClientEditDialog from "./ClientEditDialog";
+import { formatPhone } from '@/lib/utils';
 
 interface ClientListProps {
   clients: Client[];
@@ -36,7 +37,7 @@ export default function ClientList({ clients, onUpdated }: ClientListProps) {
           <div>
             <p className="font-semibold">{c.name}</p>
             <p className="text-sm text-muted-foreground">{c.email}</p>
-            <p className="text-sm text-muted-foreground">{c.phone}</p>
+            <p className="text-sm text-muted-foreground">{formatPhone(c.phone)}</p>
             {c.address && (
               <p className="text-sm text-muted-foreground">{c.address}</p>
             )}

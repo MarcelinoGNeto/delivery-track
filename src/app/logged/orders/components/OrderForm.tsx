@@ -10,6 +10,9 @@ import { Product } from "@/types/product";
 import { Client } from "@/types/client";
 import { useAuth } from "@/context/AuthContext";
 import { PaymentMethod } from "@/models/Order";
+import { Trash } from "lucide-react";
+import ClientSelectCombobox from "./ClientSelect";
+import ProductSelectCombobox from "./ProductSelect";
 
 const orderSchema = z.object({
   clientId: z.string().min(1, "Selecione um cliente."),
@@ -28,8 +31,6 @@ const orderSchema = z.object({
       message: "Selecione um método de pagamento.",
     }),
 });
-
-
 
 export type OrderFormData = z.infer<typeof orderSchema>;
 
@@ -114,14 +115,15 @@ export default function OrderForm({
       {/* Cliente */}
       <div>
         <label>Cliente</label>
-        <select {...register("clientId")} className="w-full border rounded p-2">
-          <option value="">Selecione um cliente</option>
-          {clients.map((c) => (
-            <option key={c._id} value={c._id}>
-              {c.name}
-            </option>
-          ))}
-        </select>
+        <ClientSelectCombobox
+          value={watch("clientId")}
+          onChange={(val) => setValue("clientId", val)}
+          clients={clients}
+        />
+
+        {errors.clientId && (
+          <p className="text-red-500 text-sm">{errors.clientId.message}</p>
+        )}
         {errors.clientId && (
           <p className="text-red-500 text-sm">{errors.clientId.message}</p>
         )}
@@ -131,18 +133,11 @@ export default function OrderForm({
       <div className="space-y-2">
         {fields.map((field, index) => (
           <div key={field.id} className="flex gap-2 items-center">
-            <select
-              {...register(`items.${index}.productId`)}
-              className="border rounded p-2 flex-1"
-            >
-              <option value="">Selecione o produto</option>
-              {products.map((p) => (
-                <option key={p._id} value={p._id}>
-                  {p.name}
-                </option>
-              ))}
-            </select>
-
+            <ProductSelectCombobox
+              value={items[index].productId}
+              onChange={(val) => setValue(`items.${index}.productId`, val)}
+              products={products}
+            />
             <Input
               type="number"
               min={1}
@@ -162,7 +157,7 @@ export default function OrderForm({
               size="sm"
               onClick={() => remove(index)}
             >
-              Remover
+              <Trash size={16} />
             </Button>
           </div>
         ))}

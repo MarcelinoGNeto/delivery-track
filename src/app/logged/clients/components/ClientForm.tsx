@@ -1,17 +1,20 @@
 "use client";
 
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
 import { useAuth } from "@/context/AuthContext";
+import { formatPhone, unmaskPhone } from "@/lib/utils";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
   email: z.string().email("Informe um e-mail válido."),
-  phone: z.string().min(8, "O telefone é obrigatório."),
+  phone: z
+    .string()
+    .regex(/^\(\d{2}\) 9 \d{4}-\d{4}$/, "Formato de telefone inválido."),
   address: z.string().optional(),
 });
 
@@ -26,16 +29,29 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
     register,
     handleSubmit,
     reset,
+    setValue,
+    control,
     formState: { isSubmitting, errors },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
   });
 
   const { user } = useAuth();
+  const phoneValue = useWatch({ control, name: "phone", defaultValue: "" });
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setValue("phone", formatted);
+  };
 
   const onSubmit = async (data: ClientFormData) => {
     try {
-      const payload = { ...data, userId: user?._id };
+      const payload = {
+        ...data,
+        phone: unmaskPhone(data.phone),
+        userId: user?._id,
+      };
+
       const res = await fetch("/api/clients", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -45,11 +61,7 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
       const result = await res.json();
 
       if (!res.ok) {
-        if (result?.error) {
-          toast.error(result.error);
-        } else {
-          toast.error("Erro ao cadastrar cliente.");
-        }
+        toast.error(result?.error || "Erro ao cadastrar cliente.");
         return;
       }
 
@@ -77,7 +89,13 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
         <p className="text-red-500 text-sm">{errors.email.message}</p>
       )}
 
-      <Input placeholder="Telefone" {...register("phone")} />
+      <Input
+        placeholder="Telefone"
+        type="tel"
+        value={phoneValue}
+        onChange={handlePhoneChange}
+        maxLength={12}
+      />
       {errors.phone && (
         <p className="text-red-500 text-sm">{errors.phone.message}</p>
       )}

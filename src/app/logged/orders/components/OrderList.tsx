@@ -4,12 +4,14 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { EditIcon } from "lucide-react";
+import { EditIcon, Printer } from "lucide-react";
 import EditOrderModal from "./EditOrderModal";
 import OrderReceiptDialog from "./OrderReceiptDialog";
 import { Order } from "@/types/order";
 import { Product } from "@/types/product";
 import { Client } from "@/types/client";
+import { IconBrandWhatsapp } from "@tabler/icons-react";
+import Link from "next/link";
 
 interface OrderListProps {
   orders: Order[];
@@ -37,6 +39,9 @@ export default function OrderList({
   const findClientName = (id: string) =>
     clients.find((c) => c._id === id)?.name || "Cliente não encontrado";
 
+  const findClientPhone = (id: string) =>
+    clients.find((c) => c._id === id)?.phone || "";
+
   const findProductName = (id: string) =>
     products.find((p) => p._id === id)?.name || "Produto não encontrado";
 
@@ -47,7 +52,13 @@ export default function OrderList({
           <CardContent className="p-4 space-y-3">
             <div className="flex justify-between items-center">
               <div>
-                <h3 className="font-semibold">{findClientName(order.clientId)}</h3>
+                <div className="flex items-center gap-2">
+                  <h3 className="font-semibold">{findClientName(order.clientId)}</h3>
+                  <Link href={`https://wa.me/${findClientPhone(order.clientId)}?text=Ol%C3%A1%2C%20...`} target="_blank" rel="noopener noreferrer">
+                    <IconBrandWhatsapp size={20} className="text-green-500 cursor-pointer" />
+                    
+                  </Link>
+                </div>
                 <p className="text-sm text-muted-foreground">
                   Criado em: {new Date(order.createdAt).toLocaleString()}
                 </p>
@@ -65,7 +76,7 @@ export default function OrderList({
                   size="sm"
                   onClick={() => setSelectedOrder(order)}
                 >
-                  Visualizar / Imprimir
+                  <Printer size={16} />
                 </Button>
               </div>
             </div>

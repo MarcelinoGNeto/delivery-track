@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
 import { Client } from "@/app/logged/clients/page";
+import { formatPhone, unmaskPhone } from "@/lib/utils";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
@@ -40,6 +41,8 @@ export default function ClientEditDialog({
     register,
     handleSubmit,
     reset,
+    control,
+    setValue,
     formState: { isSubmitting, errors },
   } = useForm<ClientFormData>({
     resolver: zodResolver(clientSchema),
@@ -51,12 +54,21 @@ export default function ClientEditDialog({
     },
   });
 
+    const phoneValue = useWatch({ control, name: "phone", defaultValue: "" });
+const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setValue("phone", formatted);
+  };
   const onSubmit = async (data: ClientFormData) => {
     try {
+      const payload = {
+        ...data,
+        phone: unmaskPhone(data.phone),
+      };
       const res = await fetch(`/api/clients/${client._id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(payload),
       });
 
       if (!res.ok) throw new Error("Erro ao atualizar cliente");
@@ -89,7 +101,13 @@ export default function ClientEditDialog({
           <Input {...register("email")} placeholder="E-mail" />
           {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
 
-          <Input {...register("phone")} placeholder="Telefone" />
+          <Input
+        placeholder="Telefone"
+        type="tel"
+        value={phoneValue}
+        onChange={handlePhoneChange}
+        maxLength={12}
+      />
           {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
 
           <Input {...register("address")} placeholder="Endereço (opcional)" />

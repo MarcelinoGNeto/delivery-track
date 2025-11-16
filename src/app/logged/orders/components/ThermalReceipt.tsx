@@ -1,24 +1,9 @@
 "use client";
 
-import { OrderStatus, PaymentStatus } from "@/models/Order";
+import { useAuth } from "@/context/AuthContext";
 import { Client } from "@/types/client";
+import { Order } from "@/types/order";
 import { Product } from "@/types/product";
-
-interface OrderItem {
-  productId: string;
-  quantity: number;
-  price: number;
-}
-
-export interface Order {
-  _id: string;
-  clientId: string;
-  items: OrderItem[];
-  createdAt: string;
-  totalPrice: number;
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-}
 
 interface OrderReceiptProps {
   order: Order;
@@ -26,7 +11,12 @@ interface OrderReceiptProps {
   products: Product[];
 }
 
-export default function ThermalReceipt({ order, client, products }: OrderReceiptProps) {
+export default function ThermalReceipt({
+  order,
+  client,
+  products,
+}: OrderReceiptProps) {
+  const { user } = useAuth(); 
   const findProductName = (id: string) =>
     products.find((p) => p._id === id)?.name || "Produto não encontrado";
 
@@ -62,24 +52,42 @@ export default function ThermalReceipt({ order, client, products }: OrderReceipt
             padding-top: 3px;
             text-align: right;
           }
-          @media print {
-            body * {
-              visibility: hidden;
-            }
-            .receipt, .receipt * {
-              visibility: visible;
-            }
-            .receipt {
-              position: absolute;
-              left: 0;
-              top: 0;
-            }
+        @media print {
+          @page {
+            margin: 0;
+            size: 80mm auto;
           }
+
+          body {
+            margin: 0;
+            padding: 0;
+          }
+
+          body * {
+            visibility: hidden;
+          }
+
+          .receipt, .receipt * {
+            visibility: visible;
+          }
+
+          .receipt {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 80mm;
+            margin: 0;
+            padding: 0;
+            padding-left: 15px;
+            padding-right: 15px;
+            box-sizing: border-box;
+          }
+        }
         `}
       </style>
 
       <div className="header">
-        <h3>*** COMANDA ***</h3>
+        <h3>*** {user?.name} ***</h3>
         <p>Cliente: {client.name}</p>
         <p>Endereço: {client.address}</p>
         <p>Telefone: {client.phone}</p>
@@ -93,16 +101,15 @@ export default function ThermalReceipt({ order, client, products }: OrderReceipt
             <span>
               {item.quantity}x {findProductName(item.productId)}
             </span>
-            <span>
-              R$ {(item.price * item.quantity).toFixed(2)}
-            </span>
+            <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
           </div>
         ))}
       </div>
 
       <div className="totals">
         <p>Total: R$ {order.totalPrice.toFixed(2)}</p>
-        <p>Status do Pagamento: {order.paymentStatus}</p>
+        <p>Método de pagamento: {order.paymentMethod}</p>
+        <p>Status: {order.paymentStatus}</p>
       </div>
 
       <div className="footer">
