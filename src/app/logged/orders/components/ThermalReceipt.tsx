@@ -101,7 +101,7 @@ export default function ThermalReceipt({
             <span>
               {item.quantity}x {findProductName(item.productId)}
             </span>
-            <span>R$ {(item.price * item.quantity).toFixed(2)}</span>
+            <span>R$ {(item.price).toFixed(2)}</span>
           </div>
         ))}
       </div>

@@ -1,6 +1,11 @@
 "use client";
 
-import { useFieldArray, useForm, SubmitHandler } from "react-hook-form";
+import {
+  useFieldArray,
+  useForm,
+  SubmitHandler,
+  Controller,
+} from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -9,7 +14,6 @@ import { toast } from "sonner";
 import { Product } from "@/types/product";
 import { Client } from "@/types/client";
 import { useAuth } from "@/context/AuthContext";
-import { PaymentMethod } from "@/models/Order";
 import { Trash } from "lucide-react";
 import ClientSelectCombobox from "./ClientSelect";
 import ProductSelectCombobox from "./ProductSelect";
@@ -26,8 +30,14 @@ const orderSchema = z.object({
     )
     .min(1, "Adicione pelo menos um produto."),
   paymentMethod: z
-    .nativeEnum(PaymentMethod)
-    .refine((val) => Object.values(PaymentMethod).includes(val), {
+    .union([
+      z.literal("cartão de crédito"),
+      z.literal("cartão de débito"),
+      z.literal("dinheiro"),
+      z.literal("pix"),
+      z.literal(""),
+    ])
+    .refine((val) => val !== "", {
       message: "Selecione um método de pagamento.",
     }),
 });
@@ -103,6 +113,7 @@ export default function OrderForm({
       reset({
         clientId: "",
         items: [{ productId: "", quantity: 1, price: 0 }],
+        paymentMethod: "",
       });
     } catch (error) {
       console.error(error);
@@ -115,29 +126,49 @@ export default function OrderForm({
       {/* Cliente */}
       <div>
         <label>Cliente</label>
-        <ClientSelectCombobox
-          value={watch("clientId")}
-          onChange={(val) => setValue("clientId", val)}
-          clients={clients}
+        <Controller
+          control={control}
+          name="clientId"
+          render={({ field, fieldState }) => (
+            <div>
+              <ClientSelectCombobox
+                value={field.value}
+                onChange={(val) => field.onChange(val)}
+                clients={clients}
+              />
+              {fieldState.error && fieldState.isTouched && (
+                <p className="text-red-500 text-sm">
+                  {fieldState.error.message}
+                </p>
+              )}
+            </div>
+          )}
         />
-
-        {errors.clientId && (
-          <p className="text-red-500 text-sm">{errors.clientId.message}</p>
-        )}
-        {errors.clientId && (
-          <p className="text-red-500 text-sm">{errors.clientId.message}</p>
-        )}
       </div>
 
       {/* Itens */}
       <div className="space-y-2">
         {fields.map((field, index) => (
           <div key={field.id} className="flex gap-2 items-center">
-            <ProductSelectCombobox
-              value={items[index].productId}
-              onChange={(val) => setValue(`items.${index}.productId`, val)}
-              products={products}
+            <Controller
+              control={control}
+              name={`items.${index}.productId`}
+              render={({ field, fieldState }) => (
+                <div className="w-full">
+                  <ProductSelectCombobox
+                    value={field.value}
+                    onChange={(val) => field.onChange(val)}
+                    products={products}
+                  />
+                  {fieldState.error && (
+                    <p className="text-red-500 text-sm">
+                      {fieldState.error.message}
+                    </p>
+                  )}
+                </div>
+              )}
             />
+
             <Input
               type="number"
               min={1}

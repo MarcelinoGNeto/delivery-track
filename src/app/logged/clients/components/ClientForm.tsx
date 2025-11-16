@@ -94,7 +94,6 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
         type="tel"
         value={phoneValue}
         onChange={handlePhoneChange}
-        maxLength={12}
       />
       {errors.phone && (
         <p className="text-red-500 text-sm">{errors.phone.message}</p>

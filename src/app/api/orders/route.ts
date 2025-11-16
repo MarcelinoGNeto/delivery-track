@@ -7,6 +7,11 @@ import jwt from "jsonwebtoken";
 const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const dateParam = searchParams.get("date"); // formato: YYYY-MM-DD
+  const page = parseInt(searchParams.get("page") || "1");
+  const limit = parseInt(searchParams.get("limit") || "10");
+
   const authHeader = req.headers.get("authorization");
   let token: string | null = null;
 
@@ -25,10 +30,24 @@ export async function GET(req: Request) {
 
   const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
   await connectDB();
-  const orders = await Order.find({ userId: decoded.userId }).sort({
-    createdAt: -1,
-  });
-  return NextResponse.json(orders);
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const query: any = { userId: decoded.userId };
+
+  if (dateParam) {
+    const start = new Date(`${dateParam}T00:00:00.000Z`);
+    const end = new Date(`${dateParam}T23:59:59.999Z`);
+    query.createdAt = { $gte: start, $lte: end };
+  }
+
+  const orders = await Order.find(query)
+    .sort({ createdAt: -1 })
+    .skip((page - 1) * limit)
+    .limit(limit);
+
+  const total = await Order.countDocuments(query);
+
+  return NextResponse.json({ orders, total });
 }
 
 export async function POST(request: Request) {

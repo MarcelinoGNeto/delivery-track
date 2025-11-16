@@ -31,9 +31,7 @@ export default function OrderList({
 
   if (orders.length === 0)
     return (
-      <p className="text-sm text-muted-foreground">
-        Nenhum pedido cadastrado.
-      </p>
+      <p className="text-sm text-muted-foreground">Nenhum pedido cadastrado.</p>
     );
 
   const findClientName = (id: string) =>
@@ -44,6 +42,11 @@ export default function OrderList({
 
   const findProductName = (id: string) =>
     products.find((p) => p._id === id)?.name || "Produto não encontrado";
+  if (!Array.isArray(orders) || orders.length === 0) {
+    return (
+      <p className="text-sm text-muted-foreground">Nenhum pedido cadastrado.</p>
+    );
+  }
 
   return (
     <div className="space-y-4">
@@ -53,10 +56,20 @@ export default function OrderList({
             <div className="flex justify-between items-center">
               <div>
                 <div className="flex items-center gap-2">
-                  <h3 className="font-semibold">{findClientName(order.clientId)}</h3>
-                  <Link href={`https://wa.me/${findClientPhone(order.clientId)}?text=Ol%C3%A1%2C%20...`} target="_blank" rel="noopener noreferrer">
-                    <IconBrandWhatsapp size={20} className="text-green-500 cursor-pointer" />
-                    
+                  <h3 className="font-semibold">
+                    {findClientName(order.clientId)}
+                  </h3>
+                  <Link
+                    href={`https://wa.me/${findClientPhone(
+                      order.clientId
+                    )}?text=Ol%C3%A1%2C%20...`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <IconBrandWhatsapp
+                      size={20}
+                      className="text-green-500 cursor-pointer"
+                    />
                   </Link>
                 </div>
                 <p className="text-sm text-muted-foreground">
@@ -96,19 +109,31 @@ export default function OrderList({
             <div className="flex justify-between items-center">
               <div className="flex gap-2">
                 <Badge
-                  variant={order.status === "entregue" ? "secondary" : "destructive"}
-                  className={order.status === "entregue" ? "bg-green-500 text-white" : ""}
+                  variant={
+                    order.status === "entregue" ? "secondary" : "destructive"
+                  }
+                  className={
+                    order.status === "entregue" ? "bg-green-500 text-white" : ""
+                  }
                 >
                   Pedido: {order.status}
                 </Badge>
                 <Badge
-                  variant={order.paymentStatus === "pago" ? "secondary" : "outline"}
-                  className={order.paymentStatus === "pago" ? "bg-green-500 text-white" : ""}
+                  variant={
+                    order.paymentStatus === "pago" ? "secondary" : "outline"
+                  }
+                  className={
+                    order.paymentStatus === "pago"
+                      ? "bg-green-500 text-white"
+                      : ""
+                  }
                 >
                   Pagamento: {order.paymentStatus}
                 </Badge>
               </div>
-              <p className="font-semibold">Total: R$ {order.totalPrice.toFixed(2)}</p>
+              <p className="font-semibold">
+                Total: R$ {order.totalPrice.toFixed(2)}
+              </p>
             </div>
           </CardContent>
         </Card>

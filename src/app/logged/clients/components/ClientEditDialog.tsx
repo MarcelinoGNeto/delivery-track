@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -54,11 +54,21 @@ export default function ClientEditDialog({
     },
   });
 
-    const phoneValue = useWatch({ control, name: "phone", defaultValue: "" });
-const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const phoneValue = useWatch({ control, name: "phone", defaultValue: "" });
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setValue("phone", formatted);
   };
+  useEffect(() => {
+    if (open) {
+      reset({
+        name: client.name,
+        email: client.email,
+        phone: formatPhone(client.phone),
+        address: client.address ?? "",
+      });
+    }
+  }, [open, client, reset]);
   const onSubmit = async (data: ClientFormData) => {
     try {
       const payload = {
@@ -96,19 +106,24 @@ const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3 mt-2">
           <Input {...register("name")} placeholder="Nome" />
-          {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
+          {errors.name && (
+            <p className="text-red-500 text-sm">{errors.name.message}</p>
+          )}
 
           <Input {...register("email")} placeholder="E-mail" />
-          {errors.email && <p className="text-red-500 text-sm">{errors.email.message}</p>}
+          {errors.email && (
+            <p className="text-red-500 text-sm">{errors.email.message}</p>
+          )}
 
           <Input
-        placeholder="Telefone"
-        type="tel"
-        value={phoneValue}
-        onChange={handlePhoneChange}
-        maxLength={12}
-      />
-          {errors.phone && <p className="text-red-500 text-sm">{errors.phone.message}</p>}
+            placeholder="Telefone"
+            type="tel"
+            value={phoneValue}
+            onChange={handlePhoneChange}
+          />
+          {errors.phone && (
+            <p className="text-red-500 text-sm">{errors.phone.message}</p>
+          )}
 
           <Input {...register("address")} placeholder="Endereço (opcional)" />
 

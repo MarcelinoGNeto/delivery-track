@@ -1,18 +1,8 @@
 "use client";
 
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import {
-  BarChart2,
-  Package,
-  ShoppingCart,
-  Users,
-} from "lucide-react";
+import { BarChart2, Package, ShoppingCart, Users } from "lucide-react";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { OrderStatus, PaymentStatus } from "@/models/Order";
@@ -53,11 +43,12 @@ export default function DashboardPage() {
 
       const clientsData = await clientsRes.json();
       const productsData = await productsRes.json();
-      const ordersData = await ordersRes.json();
+      const { orders } = await ordersRes.json();
+      setOrders(orders);
 
       setClients(clientsData);
       setProducts(productsData);
-      setOrders(ordersData);
+      setOrders(orders);
     } catch (error) {
       console.error(error);
       toast.error("Erro ao carregar dados do dashboard.");
@@ -72,19 +63,25 @@ export default function DashboardPage() {
 
   if (loading) return <p className="p-4">Carregando dashboard...</p>;
 
-  const totalRevenue = orders.reduce((acc, o) => acc + o.totalPrice, 0);
+  const totalRevenue = Array.isArray(orders)
+    ? orders.reduce((acc, o) => acc + o.totalPrice, 0)
+    : 0;
   const totalOrders = orders.length;
   const totalClients = clients.length;
   const totalProducts = products.length;
 
   const recentOrders = [...orders]
-    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    .sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    )
     .slice(0, 5);
 
   const productSales: Record<string, number> = {};
   orders.forEach((order) => {
     order.items.forEach((item) => {
-      productSales[item.productId] = (productSales[item.productId] || 0) + item.quantity;
+      productSales[item.productId] =
+        (productSales[item.productId] || 0) + item.quantity;
     });
   });
 
@@ -121,7 +118,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalClients}</div>
-            <p className="text-xs text-muted-foreground">Clientes cadastrados</p>
+            <p className="text-xs text-muted-foreground">
+              Clientes cadastrados
+            </p>
           </CardContent>
         </Card>
 
@@ -132,7 +131,9 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{totalProducts}</div>
-            <p className="text-xs text-muted-foreground">Produtos disponíveis</p>
+            <p className="text-xs text-muted-foreground">
+              Produtos disponíveis
+            </p>
           </CardContent>
         </Card>
 
@@ -142,7 +143,9 @@ export default function DashboardPage() {
             <BarChart2 className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">R$ {totalRevenue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">
+              R$ {totalRevenue.toFixed(2)}
+            </div>
             <p className="text-xs text-muted-foreground">Total recebido</p>
           </CardContent>
         </Card>
@@ -159,7 +162,10 @@ export default function DashboardPage() {
               {recentOrders.map((order) => {
                 const client = clients.find((c) => c._id === order.clientId);
                 return (
-                  <li key={order._id} className="flex justify-between items-center">
+                  <li
+                    key={order._id}
+                    className="flex justify-between items-center"
+                  >
                     <div>
                       <p className="font-medium">{client?.name || "Cliente"}</p>
                       <p className="text-xs text-muted-foreground">
@@ -167,11 +173,17 @@ export default function DashboardPage() {
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold">R$ {order.totalPrice.toFixed(2)}</p>
+                      <p className="text-sm font-semibold">
+                        R$ {order.totalPrice.toFixed(2)}
+                      </p>
                       <div className="flex gap-1 justify-end">
                         <Badge variant="outline">Pedido: {order.status}</Badge>
                         <Badge
-                          variant={order.paymentStatus === "pago" ? "secondary" : "outline"}
+                          variant={
+                            order.paymentStatus === "pago"
+                              ? "secondary"
+                              : "outline"
+                          }
                         >
                           Pagamento: {order.paymentStatus}
                         </Badge>

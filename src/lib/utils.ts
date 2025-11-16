@@ -6,16 +6,13 @@ export function cn(...inputs: ClassValue[]) {
 }
 
 export function formatPhone(value: string): string {
-  const digits = value.replace(/\D/g, "");
+  const digits = value.replace(/\D/g, "").slice(0, 11); 
+  if (digits.length === 0) return ""; 
 
-  if (digits.length !== 11) return value;
-
-  const ddd = digits.slice(0, 2);
-  const first = digits.slice(2, 3);
-  const middle = digits.slice(3, 7);
-  const last = digits.slice(7, 11);
-
-  return `(${ddd}) ${first} ${middle}-${last}`;
+  if (digits.length <= 2) return `(${digits}`;
+  if (digits.length <= 3) return `(${digits.slice(0, 2)}) ${digits.slice(2)}`;
+  if (digits.length <= 7) return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3)}`;
+  return `(${digits.slice(0, 2)}) ${digits.slice(2, 3)} ${digits.slice(3, 7)}-${digits.slice(7)}`;
 }
 
 export function unmaskPhone(value: string): string {

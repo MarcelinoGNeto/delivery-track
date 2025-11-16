@@ -6,6 +6,7 @@ import OrderForm from "./components/OrderForm";
 import OrderList from "./components/OrderList";
 import { OrderStatus, PaymentStatus } from "@/models/Order";
 import { Client } from "@/types/client";
+import OrderPagination from "./components/OrderPagination";
 
 interface Product {
   _id: string;
@@ -29,6 +30,9 @@ export default function OrdersPage() {
   const [products, setProducts] = useState<Product[]>([]);
   const [ordersApi, setOrdersApi] = useState<OrderApi[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [page, setPage] = useState(1);
+  const [totalOrders, setTotalOrders] = useState(0);
 
   const fetchAll = async () => {
     try {
@@ -56,12 +60,35 @@ export default function OrdersPage() {
     }
   };
 
+  const fetchOrders = async (date: Date, page: number) => {
+    try {
+      const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
+      const res = await fetch(
+        `/api/orders?date=${dateStr}&page=${page}&limit=10`
+      );
+      if (!res.ok) throw new Error("Erro ao carregar pedidos");
+      const { orders, total } = await res.json();
+      setOrdersApi(orders); // agora é um array
+      setTotalOrders(total); // total para paginação
+    } catch (error) {
+      console.error(error);
+      toast.error("Erro ao carregar pedidos.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     fetchAll();
   }, []);
 
+  useEffect(() => {
+    fetchOrders(selectedDate, page);
+  }, [selectedDate, page]);
+
   const handleOrderCreated = async () => {
     await fetchAll();
+    await fetchOrders(selectedDate, page);
   };
 
   if (loading) return <p>Carregando...</p>;
@@ -78,6 +105,13 @@ export default function OrdersPage() {
         clients={clients}
         products={products}
         onUpdated={handleOrderCreated}
+      />
+      <OrderPagination
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+        page={page}
+        onPageChange={setPage}
+        total={totalOrders}
       />
     </div>
   );
