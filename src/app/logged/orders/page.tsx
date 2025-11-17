@@ -80,10 +80,6 @@ export default function OrdersPage() {
     init();
   }, [page, selectedDate]);
 
-  useEffect(() => {
-    fetchOrders(selectedDate, page);
-  }, [selectedDate, page]);
-
   const handleOrderCreated = async () => {
     await fetchAll();
     await fetchOrders(selectedDate, page);
