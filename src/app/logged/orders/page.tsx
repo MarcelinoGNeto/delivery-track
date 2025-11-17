@@ -1,13 +1,13 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { toast } from "sonner";
-import OrderForm from "./components/OrderForm";
-import OrderList from "./components/OrderList";
-import { OrderStatus, PaymentStatus } from "@/models/Order";
-import { Client } from "@/types/client";
-import OrderPagination from "./components/OrderPagination";
-import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import OrderForm from './components/OrderForm';
+import OrderList from './components/OrderList';
+import { OrderStatus, PaymentStatus } from '@/models/Order';
+import { Client } from '@/types/client';
+import OrderPagination from './components/OrderPagination';
+import { fetchWithAuth } from '@/lib/fetchWithAuth';
 
 interface Product {
   _id: string;
@@ -37,51 +37,48 @@ export default function OrdersPage() {
 
   const fetchAll = async () => {
     try {
-      const [clientsRes, productsRes, ordersRes] = await Promise.all([
-        fetchWithAuth("/api/clients"),
-        fetchWithAuth("/api/products"),
-        fetchWithAuth("/api/orders"),
+      const [clientsRes, productsRes] = await Promise.all([
+        fetchWithAuth('/api/clients'),
+        fetchWithAuth('/api/products'),
       ]);
 
-      if (!clientsRes.ok || !productsRes.ok || !ordersRes.ok)
-        throw new Error("Erro ao carregar dados");
+      if (!clientsRes.ok || !productsRes.ok)
+        throw new Error('Erro ao carregar dados');
 
       const clientsData = await clientsRes.json();
       const productsData = await productsRes.json();
-      const ordersData = await ordersRes.json();
 
       setClients(clientsData);
       setProducts(productsData);
-      setOrdersApi(ordersData);
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao carregar pedidos.");
-    } finally {
-      setLoading(false);
+      toast.error('Erro ao carregar dados.');
     }
   };
 
   const fetchOrders = async (date: Date, page: number) => {
     try {
-      const dateStr = date.toISOString().split("T")[0]; // YYYY-MM-DD
-      const res = await fetchWithAuth(
-        `/api/orders?date=${dateStr}&page=${page}&limit=10`
-      );
-      if (!res.ok) throw new Error("Erro ao carregar pedidos");
+      const dateStr = date.toISOString().split('T')[0];
+      const res = await fetchWithAuth(`/api/orders?date=${dateStr}&page=${page}&limit=10`);
+      if (!res.ok) throw new Error('Erro ao carregar pedidos');
       const { orders, total } = await res.json();
-      setOrdersApi(orders); // agora é um array
-      setTotalOrders(total); // total para paginação
+      setOrdersApi(orders);
+      setTotalOrders(total);
     } catch (error) {
       console.error(error);
-      toast.error("Erro ao carregar pedidos.");
-    } finally {
-      setLoading(false);
+      toast.error('Erro ao carregar pedidos.');
     }
   };
 
   useEffect(() => {
-    fetchAll();
-  }, []);
+    const init = async () => {
+      setLoading(true);
+      await fetchAll();
+      await fetchOrders(selectedDate, page);
+      setLoading(false);
+    };
+    init();
+  }, [page, selectedDate]);
 
   useEffect(() => {
     fetchOrders(selectedDate, page);
