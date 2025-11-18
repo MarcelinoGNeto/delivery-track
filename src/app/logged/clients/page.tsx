@@ -5,14 +5,7 @@ import { toast } from "sonner";
 import ClientForm from "./components/ClientForm";
 import ClientList from "./components/ClientList";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
-
-export interface Client {
-  _id: string;
-  name: string;
-  email: string;
-  phone: string;
-  address?: string;
-}
+import { Client } from "@/types/client";
 
 export default function ClientsPage() {
   const [clients, setClients] = useState<Client[]>([]);

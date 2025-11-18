@@ -14,13 +14,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { Client } from "@/app/logged/clients/page";
 import { formatPhone, unmaskPhone } from "@/lib/utils";
 import { fetchWithAuth } from "@/lib/fetchWithAuth";
+import { Client } from "@/types/client";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
-  email: z.string().email("E-mail inválido."),
   phone: z.string().min(8, "Telefone é obrigatório."),
   address: z.string().optional(),
 });
@@ -49,7 +48,6 @@ export default function ClientEditDialog({
     resolver: zodResolver(clientSchema),
     defaultValues: {
       name: client.name,
-      email: client.email,
       phone: client.phone,
       address: client.address ?? "",
     },
@@ -64,7 +62,6 @@ export default function ClientEditDialog({
     if (open) {
       reset({
         name: client.name,
-        email: client.email,
         phone: formatPhone(client.phone),
         address: client.address ?? "",
       });
@@ -109,11 +106,6 @@ export default function ClientEditDialog({
           <Input {...register("name")} placeholder="Nome" />
           {errors.name && (
             <p className="text-red-500 text-sm">{errors.name.message}</p>
-          )}
-
-          <Input {...register("email")} placeholder="E-mail" />
-          {errors.email && (
-            <p className="text-red-500 text-sm">{errors.email.message}</p>
           )}
 
           <Input

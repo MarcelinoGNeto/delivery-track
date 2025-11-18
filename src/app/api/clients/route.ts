@@ -8,9 +8,9 @@ const JWT_SECRET = process.env.JWT_SECRET!;
 
 export async function POST(req: Request) {
   try {
-    const { name, email, phone, address, userId } = await req.json();
+    const { name, phone, address, userId } = await req.json();
 
-    if (!name || !email || !phone) {
+    if (!name || !phone) {
       return NextResponse.json(
         { error: "Preencha todos os campos obrigatórios." },
         { status: 400 }
@@ -18,16 +18,16 @@ export async function POST(req: Request) {
     }
 
     await connectDB();
-    const client = await Client.create({ name, email, phone, address, userId });
+    const client = await Client.create({ name, phone, address, userId });
     return NextResponse.json(client, { status: 201 });
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   } catch (error: any) {
     console.error("Erro ao criar cliente:", error);
 
-    if (error.code === 11000 && error.keyPattern?.email) {
+    if (error.code === 11000 && error.keyPattern?.phone) {
       return NextResponse.json(
         {
-          error: `O e-mail '${error.keyValue.email}' já está cadastrado. Por favor, utilize outro.`,
+          error: `O telefone '${error.keyValue.phone}' já está cadastrado. Por favor, utilize outro.`,
         },
         { status: 400 }
       );

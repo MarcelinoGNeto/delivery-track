@@ -12,7 +12,6 @@ import { fetchWithAuth } from "@/lib/fetchWithAuth";
 
 const clientSchema = z.object({
   name: z.string().min(1, "O nome é obrigatório."),
-  email: z.string().email("Informe um e-mail válido."),
   phone: z
     .string()
     .regex(/^\(\d{2}\) 9 \d{4}-\d{4}$/, "Formato de telefone inválido."),
@@ -83,11 +82,6 @@ export default function ClientForm({ onCreated }: ClientFormProps) {
       <Input placeholder="Nome" {...register("name")} />
       {errors.name && (
         <p className="text-red-500 text-sm">{errors.name.message}</p>
-      )}
-
-      <Input placeholder="E-mail" {...register("email")} />
-      {errors.email && (
-        <p className="text-red-500 text-sm">{errors.email.message}</p>
       )}
 
       <Input
