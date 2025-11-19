@@ -6,6 +6,7 @@ export interface Order {
   items: OrderItem[];
   createdAt: string;
   totalPrice: number;
+  additionalAddress?: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod: string;

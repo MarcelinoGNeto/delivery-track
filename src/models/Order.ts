@@ -30,6 +30,7 @@ export interface OrderDocument extends Document {
   clientId: string;
   items: OrderItem[];
   totalPrice: number;
+  additionalAddress?: string;
   status: OrderStatus;
   paymentStatus: PaymentStatus;
   paymentMethod?: PaymentMethod;
@@ -48,6 +49,7 @@ const OrderSchema = new Schema<OrderDocument>(
       },
     ],
     totalPrice: { type: Number, required: true },
+    additionalAddress: { type: String },
     status: {
       type: String,
       enum: Object.values(OrderStatus),

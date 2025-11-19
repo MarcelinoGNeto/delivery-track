@@ -27,7 +27,13 @@ export default function OrderPagination({
   limit = 10,
 }: OrderPaginationProps) {
   const { user } = useAuth();
+
   const dateStr = selectedDate.toISOString().split("T")[0];
+  const formatDateBR = (isoDate: string) => {
+  const [year, month, day] = isoDate.split("-");
+  return `${day}/${month}/${year}`;
+};
+
   const totalPages = Math.ceil(total / limit);
 
   const handlePrintSalesReport = useCallback(async () => {
@@ -71,7 +77,7 @@ export default function OrderPagination({
         <div class="header">
           <h2>Relatório de Vendas</h2>
           <h3>${user?.name || "Loja"}</h3>
-          <p>Data: ${dateStr}</p>
+          <p>Data: ${formatDateBR(dateStr)}</p>
           <p>Total de vendas: R$ ${totalVendas.toFixed(2)}</p>
         </div>
 

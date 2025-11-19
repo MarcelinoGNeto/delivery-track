@@ -48,9 +48,9 @@ export default function ThermalReceipt({
             justify-content: space-between;
           }
           .receipt .totals {
-            margin-top: 5px;
-            padding-top: 3px;
-            text-align: right;
+            margin: 5px 0 5px 0;
+            padding: 3px 0 3px 0;
+            text-align: left;
           }
         @media print {
           @page {
@@ -89,7 +89,7 @@ export default function ThermalReceipt({
       <div className="header">
         <h3>*** {user?.name} ***</h3>
         <p>Cliente: {client.name}</p>
-        <p>Endereço: {client.address}</p>
+        <p>Endereço: {order.additionalAddress ? order.additionalAddress : client.address}</p>
         <p>Telefone: {client.phone}</p>
         <p>Data: {new Date(order.createdAt).toLocaleString()}</p>
         <p>Pedido ID: {order._id}</p>
@@ -107,8 +107,8 @@ export default function ThermalReceipt({
       </div>
 
       <div className="totals">
-        <p>Total: R$ {order.totalPrice.toFixed(2)}</p>
-        <p>Método de pagamento: {order.paymentMethod}</p>
+        <p className="text-right pb-1">Total: R$ {order.totalPrice.toFixed(2)}</p>
+        <p>Pagamento: {order.paymentMethod}</p>
         <p>Status: {order.paymentStatus}</p>
       </div>
 

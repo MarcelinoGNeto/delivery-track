@@ -28,6 +28,7 @@ const orderSchema = z.object({
       })
     )
     .min(1, "Adicione pelo menos um produto."),
+  additionalAddress: z.string().optional(),
   status: z.string().min(1, "Selecione o status."),
   paymentStatus: z.string().min(1, "Selecione o status de pagamento."),
   paymentMethod: z.string().min(1, "Selecione o método de pagamento."),
@@ -40,6 +41,7 @@ interface EditOrderModalProps {
     _id: string;
     clientId: string;
     items: { productId: string; quantity: number; price: number }[];
+    additionalAddress?: string;
     status: string;
     paymentStatus: string;
     paymentMethod: string;
@@ -70,6 +72,7 @@ export default function EditOrderModal({
       clientId: order.clientId,
       items: order.items,
       status: order.status,
+      additionalAddress: order.additionalAddress,
       paymentStatus: order.paymentStatus,
       paymentMethod: order.paymentMethod,
     },
@@ -167,7 +170,9 @@ export default function EditOrderModal({
                 <Input
                   type="number"
                   min={1}
-                  {...register(`items.${index}.quantity`, { valueAsNumber: true })}
+                  {...register(`items.${index}.quantity`, {
+                    valueAsNumber: true,
+                  })}
                   className="col-span-2"
                 />
 
@@ -202,28 +207,46 @@ export default function EditOrderModal({
               + Adicionar item
             </Button>
           </div>
-
+          {/* Endereço adicional */}
           <div>
-        <label>Método de pagamento</label>
-        <select
-          {...register("paymentMethod")}
-          className="w-full border rounded p-2"
-        >
-          <option value="">Selecione o método</option>
-          <option value="cartão de crédito">Cartão de Crédito</option>
-          <option value="cartão de débito">Cartão de Débito</option>
-          <option value="dinheiro">Dinheiro</option>
-          <option value="pix">Pix</option>
-        </select>
-        {errors.paymentMethod && (
-          <p className="text-red-500 text-sm">{errors.paymentMethod.message}</p>
-        )}
-      </div>
+            <Input
+              placeholder="Entregar em outro endereço? (opcional)"
+              type="text"
+              {...register("additionalAddress")}
+              className="w-full border rounded p-2"
+            />
+            {errors.additionalAddress && (
+              <p className="text-red-500 text-sm">
+                {errors.additionalAddress.message}
+              </p>
+            )}
+          </div>
+          <div>
+            <label>Método de pagamento</label>
+            <select
+              {...register("paymentMethod")}
+              className="w-full border rounded p-2"
+            >
+              <option value="">Selecione o método</option>
+              <option value="cartão de crédito">Cartão de Crédito</option>
+              <option value="cartão de débito">Cartão de Débito</option>
+              <option value="dinheiro">Dinheiro</option>
+              <option value="pix">Pix</option>
+            </select>
+            {errors.paymentMethod && (
+              <p className="text-red-500 text-sm">
+                {errors.paymentMethod.message}
+              </p>
+            )}
+          </div>
 
           {/* Status */}
           <div>
             <label>Status do Pedido</label>
-            <select {...register("status")} className="w-full border rounded p-2">
+            <select
+              {...register("status")}
+              className="w-full border rounded p-2"
+            >
               <option value="pendente">Pendente</option>
               <option value="à caminho">À caminho</option>
               <option value="entregue">Entregue</option>

@@ -14,12 +14,12 @@ export function proxy(request: NextRequest) {
     }
 
     try {
-      jwt.verify(token, JWT_SECRET); // ✅ verifica validade e expiração
+      jwt.verify(token, JWT_SECRET);
     } catch (err) {
       console.warn("Token inválido ou expirado:", err);
       const response = redirectToLogin(request);
-      response.cookies.delete("token"); // limpa o token expirado
-      response.headers.set("x-token-expired", "1"); // sinaliza para o frontend
+      response.cookies.delete("token");
+      response.headers.set("x-token-expired", "1");
       return response;
     }
   }

@@ -43,11 +43,17 @@ export async function GET(req: Request) {
   const orders = await Order.find(query)
     .sort({ createdAt: -1 })
     .skip((page - 1) * limit)
-    .limit(limit);
+    .limit(limit)
+    .lean();
+
+  const formattedOrders = orders.map((order) => ({
+    ...order,
+    createdAtBR: new Intl.DateTimeFormat("pt-BR").format(new Date(order.createdAt)),
+  }));
 
   const total = await Order.countDocuments(query);
 
-  return NextResponse.json({ orders, total });
+  return NextResponse.json({ orders: formattedOrders, total });
 }
 
 export async function POST(request: Request) {

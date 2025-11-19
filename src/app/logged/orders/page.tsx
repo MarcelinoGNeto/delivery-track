@@ -4,32 +4,16 @@ import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import OrderForm from './components/OrderForm';
 import OrderList from './components/OrderList';
-import { OrderStatus, PaymentStatus } from '@/models/Order';
 import { Client } from '@/types/client';
 import OrderPagination from './components/OrderPagination';
 import { fetchWithAuth } from '@/lib/fetchWithAuth';
-
-interface Product {
-  _id: string;
-  name: string;
-  price: number;
-}
-
-interface OrderApi {
-  _id: string;
-  clientId: string;
-  items: { productId: string; quantity: number; price: number }[];
-  totalPrice: number;
-  createdAt: string;
-  status: OrderStatus;
-  paymentStatus: PaymentStatus;
-  paymentMethod: string;
-}
+import { Product } from '@/types/product';
+import { Order } from '@/types/order';
 
 export default function OrdersPage() {
   const [clients, setClients] = useState<Client[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [ordersApi, setOrdersApi] = useState<OrderApi[]>([]);
+  const [ordersApi, setOrdersApi] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [page, setPage] = useState(1);

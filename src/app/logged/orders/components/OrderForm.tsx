@@ -30,6 +30,7 @@ const orderSchema = z.object({
       })
     )
     .min(1, "Adicione pelo menos um produto."),
+  additionalAddress: z.string().optional(),
   paymentMethod: z
     .union([
       z.literal("cartão de crédito"),
@@ -69,6 +70,7 @@ export default function OrderForm({
     defaultValues: {
       clientId: "",
       items: [{ productId: "", quantity: 1, price: 0 }],
+      additionalAddress: "",
     },
   });
 
@@ -115,6 +117,7 @@ export default function OrderForm({
         clientId: "",
         items: [{ productId: "", quantity: 1, price: 0 }],
         paymentMethod: "",
+        additionalAddress: "",
       });
     } catch (error) {
       console.error(error);
@@ -126,7 +129,6 @@ export default function OrderForm({
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
       {/* Cliente */}
       <div>
-        <label>Cliente</label>
         <Controller
           control={control}
           name="clientId"
@@ -207,14 +209,27 @@ export default function OrderForm({
           + Adicionar item
         </Button>
       </div>
+      {/* Endereço adicional */}
+      <div>
+        <Input
+          placeholder="Entregar em outro endereço? (opcional)"
+          type="text"
+          {...register("additionalAddress")}
+          className="w-full border rounded p-2"
+        />
+        {errors.additionalAddress && (
+          <p className="text-red-500 text-sm">
+            {errors.additionalAddress.message}
+          </p>
+        )}
+      </div>
       {/* Método de pagamento */}
       <div>
-        <label>Método de pagamento</label>
         <select
           {...register("paymentMethod")}
           className="w-full border rounded p-2"
         >
-          <option value="">Selecione o método</option>
+          <option value="">Selecione o método de pagamento</option>
           <option value="cartão de crédito">Cartão de Crédito</option>
           <option value="cartão de débito">Cartão de Débito</option>
           <option value="dinheiro">Dinheiro</option>
